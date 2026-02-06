@@ -27,4 +27,4 @@ jobs:
         env:
           SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
         run: |
-          python .github/scripts/fetch_tech_news.py
+          python .github/workflows/abc.py
