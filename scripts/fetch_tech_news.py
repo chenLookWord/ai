@@ -11,7 +11,7 @@ FEED_URLS = [
     "https://www.infoq.cn"
 ]
 
-SERVERCHAN_SENDKEY = 'SCT313387ThPvF1FaaccIy55SAM8nCAJWq'
+SERVERCHAN_SENDKEY = os.getenv("SERVERCHAN_SENDKEY")
 if not SERVERCHAN_SENDKEY:
     raise EnvironmentError("SERVERCHAN_SENDKEY environment variable is not set.")
 
