@@ -41,6 +41,41 @@ def fetch_news():
             print(f"Failed to fetch {url}: {e}")
     return articles
 
+def fetch_latest_articles():
+    url = "https://www.infoq.cn/"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.encoding = 'utf-8'
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        articles = []
+        # 根据当前网页结构，提取文章链接和标题（需定期维护选择器）
+        for item in soup.select('a[href^="/article/"], a[href^="/news/"]'):
+            title_elem = item.find(['h2', 'h3', 'div'], class_=lambda x: x and 'title' in x.lower())
+            desc_elem = item.find(['p', 'div'], class_=lambda x: x and ('desc' in x or 'summary' in x))
+            
+            title = title_elem.get_text(strip=True) if title_elem else item.get_text(strip=True)
+            desc = desc_elem.get_text(strip=True) if desc_elem else ''
+            link = "https://www.infoq.cn" + item['href'] if item['href'].startswith('/') else item['href']
+
+            if title and link not in [a['link'] for a in articles]:
+                articles.append({
+                    "title": title,
+                    "description": desc,
+                    "link": link,
+                    "time_fetched": datetime.now().strftime("%Y-%m-%d %H:%M")
+                })
+                if len(articles) >= 10:  # 只取前10篇
+                    break
+
+        return articles
+    except Exception as e:
+        print(f"[Error] {e}")
+        return []
+
 def send_to_serverchan(title, content):
     url = f"https://sctapi.ftqq.com/{SERVERCHAN_SENDKEY}.send"
     data = {
@@ -56,7 +91,7 @@ def send_to_serverchan(title, content):
 
 if __name__ == "__main__":
     print("🔍 正在抓取过去24小时的科技新闻...")
-    news = fetch_news()
+    news = fetch_latest_articles()
 
     if not news:
         print("📭 未找到过去24小时内的新科技新闻。")
