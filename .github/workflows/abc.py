@@ -7,8 +7,7 @@ import os
 
 # 配置
 FEED_URLS = [
-    "https://36kr.com",
-    "https://www.infoq.cn"
+    "https://www.infoq.cn/aibriefs"
 ]
 
 SERVERCHAN_SENDKEY = os.getenv("SERVERCHAN_SENDKEY")
